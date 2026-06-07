@@ -95,6 +95,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Motus - Le Jeu</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        body.game-page {
+            justify-content: flex-start;
+            align-items: center;
+            padding: 96px 16px 32px;
+            height: auto;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
         .header-game { width: 100%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .logout-btn { color: #e74c3c; text-decoration: none; font-weight: bold; }
         .grid { display: flex; flex-direction: column; gap: 6px; margin: 20px 0; }
@@ -108,8 +116,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .misplaced { background-color: #f1c40f; color: white; border-color: #f1c40f; } /* Jaune mal placé */
         .wrong { background-color: #7f8c8d; color: white; border-color: #7f8c8d; }     /* Gris absent */
     </style>
+    <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.addEventListener('load', function () {
+            window.scrollTo(0, 0);
+        });
+    </script>
 </head>
-<body>
+<body class="game-page">
 
     <div class="header-game">
         <span>Joueur : <strong><?= htmlspecialchars($_SESSION['pseudo']) ?></strong></span>
@@ -147,7 +163,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php if (!$_SESSION['game_over']): ?>
             <div>
                 <label for="guess">Ta proposition (<?= $wordLength ?> lettres) :</label>
-                <input type="text" id="guess" name="guess" autofocus required maxlength="<?= $wordLength ?>" style="text-transform: uppercase;">
+                <input type="text" id="guess" name="guess" required maxlength="<?= $wordLength ?>" style="text-transform: uppercase;">
             </div>
             <button type="submit">Valider</button>
         <?php else: ?>
