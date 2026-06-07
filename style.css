@@ -1,61 +1,199 @@
+:root {
+    --bg-color: #1a1a2e;
+    --card-bg: #162447;
+    --text-main: #ffffff;
+    --text-muted: #95a5a6;
+    --correct-color: #e74c3c;   /* Rouge Motus */
+    --misplaced-color: #f1c40f; /* Jaune Motus */
+    --wrong-color: #34495e;     /* Gris foncé neutre */
+    --empty-border: #475569;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
+    background: radial-gradient(circle at center, #1e3c72 0%, #1a1a2e 100%);
+    color: var(--text-main);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 h1 {
-    color: #2c3e50;
-    margin-bottom: 20px;
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    margin: 10px 0 20px 0;
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
+/* Styles des formulaires d'authentification (Login / Register) */
 form {
-    background: white;
+    background: var(--card-bg);
     padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
     width: 100%;
-    max-width: 350px;
+    max-width: 360px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 label {
-    font-weight: bold;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 600;
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
 
 input[type="text"],
 input[type="password"] {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; /* Pour que le padding ne dépasse pas la largeur */
+    padding: 12px;
+    margin-bottom: 20px;
+    background: #0f172a;
+    border: 2px solid var(--empty-border);
+    border-radius: 6px;
+    color: white;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: #3498db;
+    outline: none;
 }
 
 button {
     width: 100%;
-    background-color: #3498db; /* Bleu style bouton */
+    background: linear-gradient(135deg, #3498db, #2980b9);
     color: white;
     border: none;
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 4px;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
 }
 
 button:hover {
-    background-color: #2980b9;
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.5);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+a {
+    color: #3498db;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: #5dade2;
 }
 
 p {
+    color: var(--text-muted);
+}
+
+/* --- STRUCTURE DE LA GRILLE DE JEU (game.php) --- */
+.header-game {
+    width: 100%;
+    max-width: 330px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+}
+
+.stats-bar {
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
     text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logout-btn {
+    color: #ff6b6b;
+    font-weight: bold;
+}
+
+.grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 15px 0 25px 0;
+}
+
+.row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.letter {
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 800;
+    border: 2px solid var(--empty-border);
+    background: transparent;
+    border-radius: 6px;
+    text-transform: uppercase;
+    user-select: none;
+    transition: background-color 0.5s, border-color 0.5s;
+}
+
+/* États des lettres validées avec une légère animation pop */
+.correct {
+    background-color: var(--correct-color);
+    border-color: var(--correct-color);
+    animation: popIn 0.3s ease-in-out;
+}
+
+.misplaced {
+    background-color: var(--misplaced-color);
+    border-color: var(--misplaced-color);
+    border-radius: 50%; /* Style Motus : la bulle jaune ! */
+    animation: popIn 0.3s ease-in-out;
+}
+
+.wrong {
+    background-color: var(--wrong-color);
+    border-color: var(--wrong-color);
+    color: #bdc3c7;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
 }
