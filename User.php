@@ -61,7 +61,7 @@ class User {
 
         if ($user && $passwordIsValid) {
             
-            // ---> LIGNES AJOUTÉES : Création du "bracelet VIP" (la session) <---
+            // Création du "bracelet VIP" (la session)
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
             }
@@ -72,4 +72,18 @@ class User {
         }
         return false; // Échec de la connexion
     }
-} 
+
+    // Méthode pour mettre à jour les statistiques du joueur
+    public function updateStats($userId, $isVictory) {
+        // 1. On augmente toujours le nombre de parties jouées
+        // 2. Si c'est une victoire, on augmente aussi les parties gagnées
+        if ($isVictory) {
+            $sql = "UPDATE users SET games_played = games_played + 1, games_won = games_won + 1 WHERE id_users = :id";
+        } else {
+            $sql = "UPDATE users SET games_played = games_played + 1 WHERE id_users = :id";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([':id' => $userId]);
+    }
+}
