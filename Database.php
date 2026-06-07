@@ -17,4 +17,7 @@ class Database {
             echo "Erreur de connexion : " . $e->getMessage();
         }
     }
+    public function getConnection() {
+        return $this->connexion;
+    }
 }
