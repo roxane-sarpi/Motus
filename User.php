@@ -86,4 +86,15 @@ class User {
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([':id' => $userId]);
     }
+    // Méthode pour récupérer les meilleurs joueurs (Wall of Fame)
+    public function getLeaderboard($limit = 10) {
+        // On récupère les joueurs qui ont au moins joué 1 partie, triés par victoires
+        $sql = "SELECT pseudo, games_played, games_won FROM users WHERE games_played > 0 ORDER BY games_won DESC, games_played ASC LIMIT :limit";
+        $stmt = $this->db->prepare($sql);
+        // On sécurise la limite (PDO::PARAM_INT est obligatoire pour un LIMIT)
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

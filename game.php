@@ -169,8 +169,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="header-game">
         <div class="header-top">
-            <span>Joueur : <strong><?= htmlspecialchars($_SESSION['pseudo']) ?></strong></span>
-            <a href="logout.php" class="logout-btn">Quitter</a>
+            <span>👤 <strong><?= htmlspecialchars($_SESSION['pseudo']) ?></strong></span>
+            <div>
+                <a href="leaderboard.php" style="color: #f1c40f; text-decoration: none; margin-right: 15px; font-weight: bold;">🏆 Classement</a>
+                <a href="logout.php" class="logout-btn">Quitter</a>
+            </div>
         </div>
         <div class="stats-bar">
             📊 Parties : <strong><?= $total ?></strong> | Victoires : <strong><?= $victoires ?></strong> (<?= $ratio ?>%)
