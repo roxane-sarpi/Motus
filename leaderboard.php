@@ -1,7 +1,7 @@
 <?php
-session_start();
+require_once 'Security.php';
+startSecureSession();
 
-// Protection : si non connecté, retour à l'accueil
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
@@ -10,9 +10,15 @@ if (!isset($_SESSION['user_id'])) {
 require_once 'Database.php';
 require_once 'User.php';
 
-// Récupération du Top 10
 $database = new Database();
-$userObj = new User($database->getConnection());
+$db = $database->getConnection();
+
+if (!$db) {
+    http_response_code(500);
+    exit('Erreur temporaire, merci de reessayer plus tard.');
+}
+
+$userObj = new User($db);
 $leaders = $userObj->getLeaderboard(10);
 ?>
 
@@ -87,15 +93,15 @@ $leaders = $userObj->getLeaderboard(10);
             </thead>
             <tbody>
                 <?php if (count($leaders) > 0): ?>
-                    <?php foreach ($leaders as $index => $player): 
+                    <?php foreach ($leaders as $index => $player):
                         $rank = $index + 1;
                         $rankClass = $rank <= 3 ? "rank-$rank" : "";
                     ?>
                         <tr>
-                            <td class="<?= $rankClass ?>">#<?= $rank ?></td>
-                            <td style="font-weight: bold;"><?= htmlspecialchars($player['pseudo']) ?></td>
-                            <td style="color: #2ecc71; font-weight: bold;"><?= $player['games_won'] ?></td>
-                            <td><?= $player['games_played'] ?></td>
+                            <td class="<?= e($rankClass) ?>">#<?= e($rank) ?></td>
+                            <td style="font-weight: bold;"><?= e($player['pseudo']) ?></td>
+                            <td style="color: #2ecc71; font-weight: bold;"><?= e($player['games_won']) ?></td>
+                            <td><?= e($player['games_played']) ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>

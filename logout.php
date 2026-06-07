@@ -1,5 +1,8 @@
 <?php
-session_start();
-session_destroy();
+require_once 'Security.php';
+
+startSecureSession();
+destroySessionAndCookie();
+
 header("Location: login.php");
 exit();

@@ -1,40 +1,37 @@
 <?php
-// 1. On inclut nos classes pour pouvoir s'en servir
+require_once 'Security.php';
 require_once 'Database.php';
 require_once 'User.php';
 
-// Variable pour stocker le message de succès ou d'erreur
+startSecureSession();
+
 $message = "";
 
-// 2. On vérifie si le formulaire a été soumis
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
-    // On récupère les données tapées par l'utilisateur
-    $pseudo = trim($_POST['pseudo']);
-    $password = $_POST['password'];
+    $pseudo = trim($_POST['pseudo'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-    if (!empty($pseudo) && !empty($password)) {
-        // 3. On initie la base de données et on récupère la connexion PDO
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? null)) {
+        $message = "Requete invalide, merci de reessayer.";
+    } elseif (!empty($pseudo) && !empty($password)) {
         $database = new Database();
         $db = $database->getConnection();
 
         if ($db) {
-            // 4. On crée notre utilisateur et on tente l'inscription
             $user = new User($db);
             $isRegistered = $user->register($pseudo, $password);
 
             if ($isRegistered) {
-                $message = "Inscription réussie ! Tu peux maintenant te connecter.";
+                $message = "Inscription reussie ! Tu peux maintenant te connecter.";
             } else {
-                $message = "Ce pseudo est déjà pris, choisis-en un autre.";
+                $message = "Ce pseudo est deja pris, choisis-en un autre.";
             }
         } else {
-            $message = "Erreur de connexion à la base de données.";
+            $message = "Erreur temporaire, merci de reessayer plus tard.";
         }
     } else {
         $message = "Merci de remplir tous les champs.";
     }
-    
 }
 ?>
 
@@ -51,10 +48,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h1>Créer un compte Motus</h1>
 
     <?php if (!empty($message)): ?>
-        <p><strong><?= $message ?></strong></p>
+        <p><strong><?= e($message) ?></strong></p>
     <?php endif; ?>
 
     <form method="POST" action="register.php">
+        <input type="hidden" name="csrf_token" value="<?= e(csrfToken()) ?>">
         <div>
             <label for="pseudo">Pseudo :</label>
             <input type="text" id="pseudo" name="pseudo" required maxlength="30">
