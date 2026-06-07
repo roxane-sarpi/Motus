@@ -11,7 +11,7 @@ class User {
 
     // Préparation de la méthode pour inscrire un joueur
     public function register($pseudo, $password) {
-        // Crytage du mot de passe
+        // Cryptage du mot de passe
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         // On prépare la requête SQL d'insertion
@@ -30,5 +30,27 @@ class User {
             return false; 
         }
     }
-}
-    
+
+    // Méthode pour connecter un joueur
+    public function login($pseudo, $password) {
+        // On prépare la requête SQL pour récupérer l'utilisateur
+        $sql = "SELECT * FROM users WHERE pseudo = :pseudo";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':pseudo' => $pseudo]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Si l'utilisateur existe et que le mot de passe est correct
+        if ($user && password_verify($password, $user['password'])) {
+            
+            // ---> LIGNES AJOUTÉES : Création du "bracelet VIP" (la session) <---
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['pseudo'] = $user['pseudo'];
+            
+            return true; // Connexion réussie
+        }
+        return false; // Échec de la connexion
+    }
+} 
