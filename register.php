@@ -34,6 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $message = "Merci de remplir tous les champs.";
     }
+    
 }
 ?>
 
@@ -65,6 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <br>
         <button type="submit">S'inscrire</button>
+        <p><a href="login.php" style="color: #3498db; text-decoration: none;">Déjà un compte ? Se connecter</a></p>
     </form>
 
 </body>
