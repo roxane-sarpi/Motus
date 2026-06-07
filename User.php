@@ -34,13 +34,32 @@ class User {
     // Méthode pour connecter un joueur
     public function login($pseudo, $password) {
         // On prépare la requête SQL pour récupérer l'utilisateur
-        $sql = "SELECT * FROM users WHERE pseudo = :pseudo";
+        $sql = "SELECT id_users AS id, pseudo, password FROM users WHERE pseudo = :pseudo";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':pseudo' => $pseudo]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // Si l'utilisateur existe et que le mot de passe est correct
-        if ($user && password_verify($password, $user['password'])) {
+        $passwordIsValid = false;
+
+        if ($user) {
+            $storedPassword = (string) $user['password'];
+            $passwordIsValid = password_verify($password, $storedPassword);
+
+            // Compatibilité avec les comptes créés avant le hashage des mots de passe.
+            if (!$passwordIsValid && hash_equals($storedPassword, $password)) {
+                $passwordIsValid = true;
+
+                $updateSql = "UPDATE users SET password = :password WHERE id_users = :id";
+                $updateStmt = $this->db->prepare($updateSql);
+                $updateStmt->execute([
+                    ':password' => password_hash($password, PASSWORD_DEFAULT),
+                    ':id' => $user['id']
+                ]);
+            }
+        }
+
+        if ($user && $passwordIsValid) {
             
             // ---> LIGNES AJOUTÉES : Création du "bracelet VIP" (la session) <---
             if (session_status() === PHP_SESSION_NONE) {

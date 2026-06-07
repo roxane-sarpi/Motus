@@ -26,6 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 $message = "Pseudo ou mot de passe incorrect.";
             }
+        } else {
+            $message = "Erreur de connexion à la base de données.";
         }
     } else {
         $message = "Merci de remplir tous les champs.";
